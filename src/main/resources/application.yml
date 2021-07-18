@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active: druid
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为80
+  port: 8091
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 800
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
+
+
+mybatis:
+  # 加载全局的配置文件
+  config-location: classpath:mybatis/mybatis-config.xml
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  # 搜索指定包别名
+  type-aliases-package: com.ming.entity
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ming.mapper.ModuleMapper">
+    <resultMap id="moduleResult" type="com.ming.entity.Module">
+        <id property="id" column="ID"/>
+        <result property="moduleCode" column="MODULE_CODE"/>
+        <result property="moduleName" column="MODULE_NAME"/>
+        <result property="moduleDesc" column="MODULE_DESC"/>
+        <result property="moduleSort" column="MODULE_SORT"/>
+        <result property="updateTime" column="CREATE_TIME"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="moduleType" column="MODULE_TYPE"/>
+        <result property="enableFlag" column="ENABLE_FLAG"/>
+        <result property="menuPath" column="MENU_PATH"/>
+        <result property="menuIcon" column="MENU_ICON"/>
+        <result property="parentId" column="PARENT_ID"/>
+    </resultMap>
+    <sql id="selectModuleVo">
+    SELECT m.ID,m.MODULE_CODE,m.MODULE_NAME,m.MODULE_DESC,m.MODULE_SORT,m.UPDATE_TIME,m.UPDATE_BY,m.CREATE_TIME,m.CREATE_BY,m.MODULE_TYPE,m.P_CODE,m.ENABLE_FLAG,m.MENU_PATH,m.MENU_ICON,m.PARENT_ID
+    FROM p_sys_module m
+    </sql>
+    <select id="selectAllModule" resultMap="moduleResult">
+        <include refid="selectModuleVo"></include>
+        order by PARENT_ID, MODULE_SORT
+    </select>
+    <select id="selectModuleByUserId" resultMap="moduleResult">
+        <include refid="selectModuleVo"></include>
+        SELECT
+        distinct mo.ID, mo.PARENT_ID, mo.MODULE_NAME, mo.MENU_PATH ,mo.MODULE_TYPE, mo.MENU_ICON,mo.MODULE_SORT,
+        mo.CREATE_TIME
+
+        FROM
+        p_sys_module mo
+        LEFT JOIN p_sys_role_module rm ON mo.ID = rm.MODULE_ID
+        LEFT JOIN p_sys_user_role ur ON rm.ROLE_ID = ur.ROLE_ID
+        LEFT JOIN p_sys_role ro ON ro.ROLE_ID = ur.ROLE_ID
+        where ur.USER_ID = '1' and mo.MODULE_TYPE in(0,1,2)
+        order by PARENT_ID, MODULE_SORT
+    </select>
+    <select id="checkModuleName" resultType="int">
+        SELECT count(1) FROM p_sys_module m
+        WHERE m.ENABLE_FLAG=0
+        AND m.MODULE_NAME = #{moduleName}
+        <if test="id!=null and id !='' ">
+            AND id != #{id}
+        </if>
+    </select>
+</mapper>

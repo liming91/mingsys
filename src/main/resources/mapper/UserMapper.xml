@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ming.mapper.UserMapper">
+    <resultMap id="userResult" type="com.ming.entity.User">
+        <id property="userId" column="USER_ID"/>
+        <result property="userAccount" column="USER_ACCOUNT"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userPass" column="USER_PASS"/>
+        <result property="roleId" column="ROLE_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="delnot" column="DELNOT"/>
+        <result property="phone" column="PHONE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="avatar" column="avatar"/>
+        <result property="sex" column="sex"/>
+        <result property="deptId" column="deptId"/>
+    </resultMap>
+    <select id="selectUserList" resultMap="userResult">
+        SELECT
+            u.USER_ID,
+            u.USER_ACCOUNT,
+            u.USER_NAME,
+            u.USER_PASS,
+            u.AVATAR,
+            u.PHONE,
+        IF (u.SEX = 0, '男', '女'),
+         u.Email,
+         u.DELNOT,
+         d.DEPT_ID,
+         d.DEPT_NAME,
+         r.ROLE_ID,
+         r.ROLE_NAME,
+         u.CREATE_TIME
+        FROM
+            p_sys_user u
+        LEFT JOIN p_sys_dept d ON u.DEPT_ID = d.DEPT_ID
+        LEFT JOIN p_sys_role r ON u.ROLE_ID = r.ROLE_ID
+        WHERE u.DELNOT=0 AND u.ENABLE_FLAG=0
+        <if test="phone!=null ">
+            AND u.PHONE like concat('%', #{phone}, '%')
+        </if>
+    </select>
+</mapper>
